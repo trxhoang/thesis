@@ -69,7 +69,7 @@ class Register extends Component {
           });
         })
         .catch(error => {
-          console.error(error.response.data);
+          console.error(error);
           if (error.response.data === 'username or email already taken') {
             this.setState({
               showError: true,

@@ -1,16 +1,15 @@
 /* eslint-disable no-console */
 import passport from 'passport';
-import bcrypt from 'bcrypt';
-import User from '../sequelize';
+import { User } from '../../sequelize';
 
 /**
  * @swagger
- * /updatePassword:
+ * /updateUser:
  *   put:
  *     tags:
  *       - Users
- *     name: Update password logged in
- *     summary: Update password while user is already logged in
+ *     name: Update User
+ *     summary: Update user info
  *     security:
  *       - bearerAuth: []
  *     consumes:
@@ -24,26 +23,25 @@ import User from '../sequelize';
  *           $ref: '#/definitions/User'
  *           type: object
  *           properties:
- *             username:
+ *             first_name:
  *               type: string
- *             password:
+ *             last_name:
+ *               type: string
+ *             email:
+ *               type: string
+ *             username:
  *               type: string
  *         required:
  *           - username
- *           - password
  *     responses:
  *       '200':
- *         description: User's password successfully updated
+ *         description: User info updated
  *       '403':
- *         description: User is not authorized to change their password
- *       '404':
- *         description: User is not found in db to update
- *
+ *         description: No authorization / user not found
  */
 
-const BCRYPT_SALT_ROUNDS = 12;
 module.exports = (app) => {
-  app.put('/updatePassword', (req, res, next) => {
+  app.put('/updateUser', (req, res, next) => {
     passport.authenticate('jwt', { session: false }, (err, user, info) => {
       if (err) {
         console.error(err);
@@ -59,22 +57,19 @@ module.exports = (app) => {
         }).then((userInfo) => {
           if (userInfo != null) {
             console.log('user found in db');
-            bcrypt
-              .hash(req.body.password, BCRYPT_SALT_ROUNDS)
-              .then((hashedPassword) => {
-                userInfo.update({
-                  password: hashedPassword,
-                });
+            userInfo
+              .update({
+                first_name: req.body.first_name,
+                last_name: req.body.last_name,
+                email: req.body.email,
               })
               .then(() => {
-                console.log('password updated');
-                res
-                  .status(200)
-                  .send({ auth: true, message: 'password updated' });
+                console.log('user updated');
+                res.status(200).send({ auth: true, message: 'user updated' });
               });
           } else {
             console.error('no user exists in db to update');
-            res.status(404).json('no user exists in db to update');
+            res.status(401).send('no user exists in db to update');
           }
         });
       }

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable max-len */
 import Sequelize from 'sequelize';
-import User from '../sequelize';
+import { User } from '../../sequelize';
 
 // eslint-disable-next-line prefer-destructuring
 const Op = Sequelize.Op;

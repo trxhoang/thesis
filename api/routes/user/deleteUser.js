@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import passport from 'passport';
-import User from '../sequelize';
+import { User } from '../../sequelize';
 
 /**
  * @swagger

@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import jwtSecret from '../config/jwtConfig';
-import User from '../sequelize';
+import jwtSecret from '../../config/jwtConfig';
+import { User } from '../../sequelize';
 
 /**
  * @swagger
@@ -40,7 +40,8 @@ import User from '../sequelize';
  *         description: Username and password don't match
  */
 
-module.exports = (app) => {
+export default (app) => {
+  console.log('here')
   app.post('/loginUser', (req, res, next) => {
     passport.authenticate('login', (err, users, info) => {
       if (err) {
