@@ -13,7 +13,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
-import { User } from '../sequelize'
+import { User, NewsDetail } from '../sequelize'
 
 passport.use(
   'register',
@@ -124,3 +124,4 @@ passport.use(
     }
   }),
 );
+

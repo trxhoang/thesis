@@ -31,7 +31,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['./routes/user/*.js'],
+  apis: ['./routes/*/*.js',],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
@@ -51,6 +51,14 @@ app.use(logger('dev'));
 app.use(passport.initialize());
 
 routes(app)
+
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
+
+
+setInterval(() => {
+  require('./crawler-vnexpress')
+  require('./crawler-dantri')
+  require('./crawler-tienphong')
+}, 2 * 60 * 60 * 1000);
 
 module.exports = app;

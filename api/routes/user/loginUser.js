@@ -41,7 +41,6 @@ import { User } from '../../sequelize';
  */
 
 export default (app) => {
-  console.log('here')
   app.post('/loginUser', (req, res, next) => {
     passport.authenticate('login', (err, users, info) => {
       if (err) {
