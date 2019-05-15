@@ -15,9 +15,9 @@ const API_PORT = process.env.API_PORT || 3003;
 
 const swaggerDefinition = {
   info: {
-    title: 'MySQL Registration Swagger API',
+    title: 'MySQL Swagger API',
     version: '1.0.0',
-    description: 'Endpoints to test the user registration routes',
+    description: 'magazine thesis',
   },
   host: 'localhost:3003',
   basePath: '/',
@@ -63,14 +63,11 @@ app.use(layout);
 app.use(express.static('public'))
 app.use((req, res) => res.redirect('/'));
 
-
-
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
 
+setInterval(() => {
+  require('./crawler')
+}, 5 * 60 * 1000);
 
-// setTimeout(() => {
-//   require('./crawler-vnexpress')
-//   require('./crawler-tuoitre')
-//   require('./crawler-tienphong')
-// }, 1000);
+
 module.exports = app;
