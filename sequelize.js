@@ -10,13 +10,15 @@ const sequelize = new Sequelize({
   password: 'trxhoang@1235',
   dialect: 'mysql',
   dialectOptions: {
-      dateStrings: true,
-        typeCast: function (field, next) { // for reading from database
-          if (field.type === 'DATETIME') {
-            return field.string()
-          }
-          return next()
-        },
+    "useUTC": false,
+    "timezone": "+07:00",
+    dateStrings: true,
+    typeCast: function (field, next) { // for reading from database
+      if (field.type === 'DATETIME') {
+        return field.string()
+      }
+      return next()
+    },
   }
 });
 
