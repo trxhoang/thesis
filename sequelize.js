@@ -10,16 +10,10 @@ const sequelize = new Sequelize({
   password: 'trxhoang@1235',
   dialect: 'mysql',
   dialectOptions: {
-    "useUTC": false,
     dateStrings: true,
-    typeCast: function (field, next) { // for reading from database
-      if (field.type === 'DATETIME') {
-        return field.string()
-      }
-      return next()
-    },
-    "timezone": "+07:00",
-  }
+    typeCast: true,
+  },
+  "timezone": "+07:00",
 });
 
 export const Category = CategoryModel(sequelize, Sequelize);
