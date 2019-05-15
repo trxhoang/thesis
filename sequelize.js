@@ -9,11 +9,6 @@ const sequelize = new Sequelize({
   username: 'trxhoang',
   password: 'trxhoang@1235',
   dialect: 'mysql',
-  define: {
-    underscored: true,
-    freezeTableName: true, //use singular table name
-    timestamps: false,  // I do not want timestamp fields by default
-  },
   dialectOptions: {
     "useUTC": false,
     dateStrings: true,
