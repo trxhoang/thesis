@@ -1,0 +1,13 @@
+<ul>
+    <% listNews.forEach(function(news){ %>
+    <!-- Single Blog Post -->
+    <li><a href="/news?id=<%-news.id%>">
+            <span style="width: 300px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;">
+                <%-news.title%></span>
+        </a></li>
+    <!-- End Single Blog Post -->
+    <% }); %>
+</ul>
