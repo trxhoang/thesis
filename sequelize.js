@@ -9,9 +9,13 @@ const sequelize = new Sequelize({
   username: 'trxhoang',
   password: 'trxhoang@1235',
   dialect: 'mysql',
+  define: {
+    underscored: true,
+    freezeTableName: true, //use singular table name
+    timestamps: false,  // I do not want timestamp fields by default
+  },
   dialectOptions: {
     "useUTC": false,
-    "timezone": "+07:00",
     dateStrings: true,
     typeCast: function (field, next) { // for reading from database
       if (field.type === 'DATETIME') {
@@ -19,6 +23,7 @@ const sequelize = new Sequelize({
       }
       return next()
     },
+    "timezone": "+07:00",
   }
 });
 
