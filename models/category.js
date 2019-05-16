@@ -27,10 +27,11 @@ module.exports = (sequelize, type) => sequelize.define('category', {
   description: type.STRING,
   generator: {
     type: type.STRING,
-    allowNull: false,
+  },
+  generator_link: {
+    type: type.STRING,
   },
   image_link: {
     type: type.STRING,
-    allowNull: false,
   },
 });
