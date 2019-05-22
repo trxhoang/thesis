@@ -15,7 +15,7 @@ const getXaHoi = async () => {
 const getGiaiTri = async () => {
     return axios({
         method: 'get',
-        url: 'https://www.tienphong.vn/rss/giai-tri-36.rss',
+        url: 'https://www.tienphong.vn/rss/giai-tri-sao-35.rss',
         responseType: 'text',
     }).then(data => parser.toJson(data.data, { object: true, }))
 }
@@ -42,102 +42,125 @@ const getDetailTienPhong = async (url) => {
 }
 
 console.log('crawler tienphong')
-getXaHoi().then(async res => {
-    const list_items = res.rss.channel.item;
-    const item = _.head(list_items)
-    const imageObject = cheerio.load(item.description);
-    const _image_link = imageObject('img').attr('src');
-    const object_insert = {
-        uuid: item.guid,
-        title: item.title,
-        description: item.description.replace(/<[^>]*>/g, ''),
-        image_link: _image_link,
-        pub_date: item.pubDate,
-        source_link: item.link
-    };
-    const { body, image_link } = await getDetailTienPhong(object_insert.source_link);
-    if (!!body) {
-        const resInsert = await axios({
-            method: 'post',
-            url: 'http://localhost:3003/insertNews',
-            responseType: 'json',
-            data: {
-                "uuid": object_insert.uuid,
-                "title": object_insert.title,
-                "description": object_insert.description,
-                "image_link": !!image_link ? image_link : object_insert.image_link,
-                "pub_date": object_insert.pub_date,
-                "source_link": object_insert.source_link,
-                "body": body,
-                category_id: 4
-            }
-        });
-    }
-})
 
 
-getGiaiTri().then(async res => {
-    const list_items = res.rss.channel.item;
-    const item = _.head(list_items)
-    const imageObject = cheerio.load(item.description);
-    const _image_link = imageObject('img').attr('src');
-    const object_insert = {
-        uuid: item.guid,
-        title: item.title,
-        description: item.description.replace(/<[^>]*>/g, ''),
-        image_link: _image_link,
-        pub_date: item.pubDate,
-        source_link: item.link
-    };
-    const { body, image_link } = await getDetailTienPhong(object_insert.source_link);
-    if (!!body) {
-        const resInsert = await axios({
-            method: 'post',
-            url: 'http://localhost:3003/insertNews',
-            responseType: 'json',
-            data: {
-                "uuid": object_insert.uuid,
-                "title": object_insert.title,
-                "description": object_insert.description,
-                "image_link": !!image_link ? image_link : object_insert.image_link,
-                "pub_date": object_insert.pub_date,
-                "source_link": object_insert.source_link,
-                "body": body,
-                category_id: 5
-            }
-        });
-    }
-})
 
-getTheThao().then(async res => {
-    const list_items = res.rss.channel.item;
-    const item = _.head(list_items)
-    const imageObject = cheerio.load(item.description);
-    const _image_link = imageObject('img').attr('src');
-    const object_insert = {
-        uuid: item.guid,
-        title: item.title,
-        description: item.description.replace(/<[^>]*>/g, ''),
-        image_link: _image_link,
-        pub_date: item.pubDate,
-        source_link: item.link
-    };
-    const { body, image_link } = await getDetailTienPhong(object_insert.source_link);
-    if (!!body) {
-        const resInsert = await axios({
-            method: 'post',
-            url: 'http://localhost:3003/insertNews',
-            responseType: 'json',
-            data: {
-                "uuid": object_insert.uuid,
-                "title": object_insert.title,
-                "description": object_insert.description,
-                "image_link": !!image_link ? image_link : object_insert.image_link,
-                "pub_date": object_insert.pub_date,
-                "source_link": object_insert.source_link,
-                "body": body,
-                category_id: 6
-            }
-        });
-    }
-})
+
+
+try {
+
+    getXaHoi().then(async res => {
+        const list_items = res.rss.channel.item;
+        const item = _.head(list_items)
+        const imageObject = cheerio.load(item.description);
+        const _image_link = imageObject('img').attr('src');
+        const object_insert = {
+            uuid: item.guid,
+            title: item.title,
+            description: item.description.replace(/<[^>]*>/g, ''),
+            image_link: _image_link,
+            pub_date: item.pubDate,
+            source_link: item.link
+        };
+        const { body, image_link } = await getDetailTienPhong(object_insert.source_link);
+        if (!!body) {
+            const resInsert = await axios({
+                method: 'post',
+                url: 'http://localhost:3003/insertNews',
+                responseType: 'json',
+                data: {
+                    "uuid": object_insert.uuid,
+                    "title": object_insert.title,
+                    "description": object_insert.description,
+                    "image_link": !!image_link ? image_link : object_insert.image_link,
+                    "pub_date": object_insert.pub_date,
+                    "source_link": object_insert.source_link,
+                    "body": body,
+                    category_id: 4
+                }
+            });
+        }
+    })   
+} catch (error) {
+    console.log("TCL: error", error)
+    
+}
+
+try {
+
+    getGiaiTri().then(async res => {
+        const list_items = res.rss.channel.item;
+        const item = _.head(list_items)
+        const imageObject = cheerio.load(item.description);
+        const _image_link = imageObject('img').attr('src');
+        const object_insert = {
+            uuid: item.guid,
+            title: item.title,
+            description: item.description.replace(/<[^>]*>/g, ''),
+            image_link: _image_link,
+            pub_date: item.pubDate,
+            source_link: item.link
+        };
+        const { body, image_link } = await getDetailTienPhong(object_insert.source_link);
+        if (!!body) {
+            const resInsert = await axios({
+                method: 'post',
+                url: 'http://localhost:3003/insertNews',
+                responseType: 'json',
+                data: {
+                    "uuid": object_insert.uuid,
+                    "title": object_insert.title,
+                    "description": object_insert.description,
+                    "image_link": !!image_link ? image_link : object_insert.image_link,
+                    "pub_date": object_insert.pub_date,
+                    "source_link": object_insert.source_link,
+                    "body": body,
+                    category_id: 5
+                }
+            });
+        }
+    })   
+} catch (error) {
+    console.log("TCL: error", error)
+    
+}
+
+try {
+
+    getTheThao().then(async res => {
+        const list_items = res.rss.channel.item;
+        const item = _.head(list_items)
+        const imageObject = cheerio.load(item.description);
+        const _image_link = imageObject('img').attr('src');
+        const object_insert = {
+            uuid: item.guid,
+            title: item.title,
+            description: item.description.replace(/<[^>]*>/g, ''),
+            image_link: _image_link,
+            pub_date: item.pubDate,
+            source_link: item.link
+        };
+        const { body, image_link } = await getDetailTienPhong(object_insert.source_link);
+        if (!!body) {
+            const resInsert = await axios({
+                method: 'post',
+                url: 'http://localhost:3003/insertNews',
+                responseType: 'json',
+                data: {
+                    "uuid": object_insert.uuid,
+                    "title": object_insert.title,
+                    "description": object_insert.description,
+                    "image_link": !!image_link ? image_link : object_insert.image_link,
+                    "pub_date": object_insert.pub_date,
+                    "source_link": object_insert.source_link,
+                    "body": body,
+                    category_id: 6
+                }
+            });
+        }
+    })
+} catch (error) {
+    console.log("TCL: error", error)
+    
+}
+

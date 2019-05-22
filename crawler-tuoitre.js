@@ -44,105 +44,122 @@ const getDetailDantri = async (url) => {
 }
 
 
-console.log('crawler dantri')
-getXaHoi().then(async res => {
-    const list_items = res.rss.channel.item;
-    const item = _.head(list_items)
-    const imageObject = cheerio.load(item.description);
-    const _image_link = imageObject('img').attr('src');
-    const object_insert = {
-        uuid: item.link,
-        title: item.title,
-        description: item.description.replace(/<[^>]*>/g, ''),
-        image_link: _image_link,
-        pub_date: item.pubDate,
-        source_link: item.link
-    };
-    const { body, image_link } = await getDetailDantri(object_insert.source_link);
-    if (!!body) {
+console.log('crawler tuoitre')
 
-        const resInsert = await axios({
-            method: 'post',
-            url: 'http://localhost:3003/insertNews',
-            responseType: 'json',
-            data: {
-                "uuid": object_insert.uuid,
-                "title": object_insert.title,
-                "description": object_insert.description,
-                "image_link": !!image_link ? image_link : object_insert.image_link,
-                "pub_date": object_insert.pub_date,
-                "source_link": object_insert.source_link,
-                "body": body,
-                category_id: 7
-            }
-        });
-    }
-});
+try {
+    getXaHoi().then(async res => {
+        const list_items = res.rss.channel.item;
+        const item = _.head(list_items)
+        const imageObject = cheerio.load(item.description);
+        const _image_link = imageObject('img').attr('src');
+        const object_insert = {
+            uuid: item.link,
+            title: item.title,
+            description: item.description.replace(/<[^>]*>/g, ''),
+            image_link: _image_link,
+            pub_date: item.pubDate,
+            source_link: item.link
+        };
+        const { body, image_link } = await getDetailDantri(object_insert.source_link);
+        if (!!body) {
 
+            const resInsert = await axios({
+                method: 'post',
+                url: 'http://localhost:3003/insertNews',
+                responseType: 'json',
+                data: {
+                    "uuid": object_insert.uuid,
+                    "title": object_insert.title,
+                    "description": object_insert.description,
+                    "image_link": !!image_link ? image_link : object_insert.image_link,
+                    "pub_date": object_insert.pub_date,
+                    "source_link": object_insert.source_link,
+                    "body": body,
+                    category_id: 7
+                }
+            });
+        }
+    });   
+} catch (error) {
+    console.log("TCL: error", error)
+    
+}
 
-getGiaiTri().then(async res => {
-    const list_items = res.rss.channel.item;
-    const item = _.head(list_items)
-    const imageObject = cheerio.load(item.description);
-    const _image_link = imageObject('img').attr('src');
-    const object_insert = {
-        uuid: item.link,
-        title: item.title,
-        description: item.description.replace(/<[^>]*>/g, ''),
-        image_link: _image_link,
-        pub_date: item.pubDate,
-        source_link: item.link
-    };
-    const { body, image_link } = await getDetailDantri(object_insert.source_link);
-    if (!!body) {
-        const resInsert = await axios({
-            method: 'post',
-            url: 'http://localhost:3003/insertNews',
-            responseType: 'json',
-            data: {
-                "uuid": object_insert.uuid,
-                "title": object_insert.title,
-                "description": object_insert.description,
-                "image_link": !!image_link ? image_link : object_insert.image_link,
-                "pub_date": object_insert.pub_date,
-                "source_link": object_insert.source_link,
-                "body": body,
-                category_id: 8
-            }
-        });
-    }
-});
+try {
 
+    getGiaiTri().then(async res => {
+        const list_items = res.rss.channel.item;
+        const item = _.head(list_items)
+        const imageObject = cheerio.load(item.description);
+        const _image_link = imageObject('img').attr('src');
+        const object_insert = {
+            uuid: item.link,
+            title: item.title,
+            description: item.description.replace(/<[^>]*>/g, ''),
+            image_link: _image_link,
+            pub_date: item.pubDate,
+            source_link: item.link
+        };
+        const { body, image_link } = await getDetailDantri(object_insert.source_link);
+        if (!!body) {
+            const resInsert = await axios({
+                method: 'post',
+                url: 'http://localhost:3003/insertNews',
+                responseType: 'json',
+                data: {
+                    "uuid": object_insert.uuid,
+                    "title": object_insert.title,
+                    "description": object_insert.description,
+                    "image_link": !!image_link ? image_link : object_insert.image_link,
+                    "pub_date": object_insert.pub_date,
+                    "source_link": object_insert.source_link,
+                    "body": body,
+                    category_id: 8
+                }
+            });
+        }
+    });
+} catch (error) {
+    console.log("TCL: error", error)
+    
+}
 
-getTheThao().then(async res => {
-    const list_items = res.rss.channel.item;
-    const item = _.head(list_items)
-    const imageObject = cheerio.load(item.description);
-    const _image_link = imageObject('img').attr('src');
-    const object_insert = {
-        uuid: item.link,
-        title: item.title,
-        description: item.description.replace(/<[^>]*>/g, ''),
-        image_link: _image_link,
-        pub_date: item.pubDate,
-        source_link: item.link
-    };
-    const { body, image_link } = await getDetailDantri(object_insert.source_link);
-    if (!!body) {
-        const resInsert = await axios({
-            method: 'post',
-            url: 'http://localhost:3003/insertNews',
-            responseType: 'json',
-            data: {
-                "uuid": object_insert.uuid,
-                "title": object_insert.title,
-                "description": object_insert.description,
-                "image_link": !!image_link ? image_link : object_insert.image_link,
-                "pub_date": object_insert.pub_date,
-                "source_link": object_insert.source_link,
-                "body": body,
-                category_id: 9
-            }
-        });
-    }
-});
+try {
+
+    getTheThao().then(async res => {
+        const list_items = res.rss.channel.item;
+        const item = _.head(list_items)
+        const imageObject = cheerio.load(item.description);
+        const _image_link = imageObject('img').attr('src');
+        const object_insert = {
+            uuid: item.link,
+            title: item.title,
+            description: item.description.replace(/<[^>]*>/g, ''),
+            image_link: _image_link,
+            pub_date: item.pubDate,
+            source_link: item.link
+        };
+        const { body, image_link } = await getDetailDantri(object_insert.source_link);
+        if (!!body) {
+            const resInsert = await axios({
+                method: 'post',
+                url: 'http://localhost:3003/insertNews',
+                responseType: 'json',
+                data: {
+                    "uuid": object_insert.uuid,
+                    "title": object_insert.title,
+                    "description": object_insert.description,
+                    "image_link": !!image_link ? image_link : object_insert.image_link,
+                    "pub_date": object_insert.pub_date,
+                    "source_link": object_insert.source_link,
+                    "body": body,
+                    category_id: 9
+                }
+            });
+        }
+    });
+    
+} catch (error) {
+    console.log("TCL: error", error)
+    
+}
