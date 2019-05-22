@@ -67,7 +67,7 @@ app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
 
 setInterval(() => {
   require('./crawler')
-}, 5 * 60 * 1000);
+}, 15 * 60 * 1000);
 
 
 module.exports = app;
