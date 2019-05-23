@@ -1,7 +1,10 @@
 /* eslint-disable arrow-parens */
 /* eslint-disable no-console */
+import _ from 'lodash'
 import passport from 'passport';
 import { NewsDetail } from '../../sequelize';
+import Sequelize from 'sequelize';
+import utils from '../../utils'
 
 /**
  * @swagger
@@ -55,26 +58,51 @@ const awaitErorrHandlerFactory = middleware => {
 
 
 module.exports = app => {
-    app.post('/insertNews', awaitErorrHandlerFactory(async (req, res, next) => {
+    app.post('/insertNews', awaitErorrHandlerFactory(async (req, res) => {
         const params = req.body;
-        const news_existed = await NewsDetail.findOne({
-            where: { uuid: params.uuid }
-        });
-        if (news_existed !== null) {
-            res.status(200).send(news_existed);
-            return null;
-        };
-        const news_insert = await NewsDetail.create({
-            uuid: params.uuid,
-            title: params.title,
-            description: params.description,
-            body: params.body,
-            image_link: params.image_link,
-            source_link: params.source_link,
-            category_id: params.category_id
-        })
-        res.status(200).send(news_insert);
-        return null
+        const body = params.body;
 
+        // const news_existed = await NewsDetail.findOne({
+        //     where: { uuid: params.uuid }
+        // });
+        // if (news_existed !== null) {
+        //     res.status(200).send(news_existed);
+        //     return null;
+        // };
+        const against = params.title;
+        const getListNewsSearch = await NewsDetail.findAll({
+            raw: true,
+            where: Sequelize.literal('MATCH (title, description) AGAINST (:name IN NATURAL LANGUAGE MODE)'),
+            replacements: {
+                name: against
+            },
+            limit: 10,
+            order: [
+                ['id', 'DESC'],
+            ],
+        });
+
+        const bodyText = utils.removeTagHtml(body);
+        const arrayPercent = _.map(getListNewsSearch, news => {
+            const bodyTextNews = utils.removeTagHtml(news.body);
+            return utils.similarity(bodyText, bodyTextNews);
+        });
+        const haveSimilarNews = _.some(arrayPercent, percent => percent > 80);
+        console.log("TCL: haveSimilarNews", _.max(arrayPercent))
+        if (!haveSimilarNews) {
+            const news_insert = await NewsDetail.create({
+                uuid: params.uuid,
+                title: params.title,
+                description: params.description,
+                body: params.body,
+                image_link: params.image_link,
+                source_link: params.source_link,
+                category_id: params.category_id
+            });
+            res.status(200).send(news_insert);
+            return null
+        };
+        res.status(200).send({ results: `Similar News are similar ${Math.round(_.max(arrayPercent) * 10000) / 100}` });
+        return null
     }));
 };

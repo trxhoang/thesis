@@ -2,15 +2,51 @@ const _ = require('lodash');
 const axios = require("axios");
 const cheerio = require('cheerio');
 
-const getDetailVnExpress = async (url) => {
-    const res = await axios({
-        method: 'get',
-        url: 'url',
-        responseType: 'html'
-    });
-    const $ = cheerio.load(res.data, { decodeEntities: false });
-    const title = $('.title_news_detail.mb10').text();
-    const description = $('.description').text();
-    const body = $('.content_detail.fck_detail.width_common.block_ads_connect').html();
-    return { title, description, body }
+
+
+function similarity(s1, s2) {
+    var longer = s1;
+    var shorter = s2;
+    if (s1.length < s2.length) {
+        longer = s2;
+        shorter = s1;
+    }
+    var longerLength = longer.length;
+    if (longerLength === 0) {
+        return 1.0;
+    }
+    return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
 }
+
+function editDistance(s1, s2) {
+    s1 = s1.toLowerCase();
+    s2 = s2.toLowerCase();
+
+    var costs = new Array();
+    for (var i = 0; i <= s1.length; i++) {
+        var lastValue = i;
+        for (var j = 0; j <= s2.length; j++) {
+            if (i == 0)
+                costs[j] = j;
+            else {
+                if (j > 0) {
+                    var newValue = costs[j - 1];
+                    if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                        newValue = Math.min(Math.min(newValue, lastValue),
+                            costs[j]) + 1;
+                    costs[j - 1] = lastValue;
+                    lastValue = newValue;
+                }
+            }
+        }
+        if (i > 0)
+            costs[s2.length] = lastValue;
+    }
+    return costs[s2.length];
+}
+
+var $str1 = "FIFA tạm dừng kế hoạch mở rộng World Cup lên 48 đội";
+var $str2 = "FIFA";
+
+var perc = Math.round(similarity($str1, $str2) * 10000) / 100;
+console.log(perc)
