@@ -1,15 +1,15 @@
-<div class="col-12 col-md-6">
+<div class="col-12 col-md-4">
     <div class="single-post-area mb-80">
         <!-- Post Thumbnail -->
         <div class="post-thumbnail">
-            <img src="<%-news.image_link%>" alt="" />
+            <img src="<%-news.image_link%>" style="object-fit: cover" alt="" />
         </div>
 
         <!-- Post Content -->
         <div class="post-content">
             <a href="/<%-news.category_key%>" class="post-cata cata-sm cata-<%-news.color%>"><%-news.category_title%></a>
             <a href="/news?id=<%-news.id%>" class="post-title"><%-news.title%></a>
-            <p class="mb-2">
+            <p class="mb-2" style="">
                 <%-news.description%>
             </p>
         </div>

@@ -62,13 +62,13 @@ module.exports = app => {
         const params = req.body;
         const body = params.body;
 
-        // const news_existed = await NewsDetail.findOne({
-        //     where: { uuid: params.uuid }
-        // });
-        // if (news_existed !== null) {
-        //     res.status(200).send(news_existed);
-        //     return null;
-        // };
+        const news_existed = await NewsDetail.findOne({
+            where: { uuid: params.uuid }
+        });
+        if (news_existed !== null) {
+            res.status(200).send(news_existed);
+            return null;
+        };
         const against = params.title;
         const getListNewsSearch = await NewsDetail.findAll({
             raw: true,
@@ -76,7 +76,7 @@ module.exports = app => {
             replacements: {
                 name: against
             },
-            limit: 10,
+            limit: 5,
             order: [
                 ['id', 'DESC'],
             ],
@@ -87,7 +87,7 @@ module.exports = app => {
             const bodyTextNews = utils.removeTagHtml(news.body);
             return utils.similarity(bodyText, bodyTextNews);
         });
-        const haveSimilarNews = _.some(arrayPercent, percent => percent > 80);
+        const haveSimilarNews = _.some(arrayPercent, percent => percent > 0.8);
         console.log("TCL: haveSimilarNews", _.max(arrayPercent))
         if (!haveSimilarNews) {
             const news_insert = await NewsDetail.create({

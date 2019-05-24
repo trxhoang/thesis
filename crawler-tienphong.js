@@ -27,12 +27,13 @@ const getTheThao = async () => {
     }).then(data => parser.toJson(data.data, { object: true, }))
 }
 
-const getDetailTienPhong = async (url) => {
+const getDetail = async (url) => {
     const res = await axios({
         method: 'get',
         url: url,
         responseType: 'html'
     });
+    if (res.status !== 200) return {}
     const $ = cheerio.load(res.data, { decodeEntities: false });
     const title = $('#headline').text();
     const description = $('#article-content-left > article > p').text();
@@ -41,8 +42,9 @@ const getDetailTienPhong = async (url) => {
     return { title, description, body, image_link }
 }
 
+console.log('crawler tienphong');
 
-async function insertNews({ object_insert, image_link, body, category_id}) {
+async function insertNews({ object_insert, image_link, body, category_id }) {
     const resInsert = await axios({
         method: 'post',
         url: 'http://localhost:3003/insertNews',
@@ -60,14 +62,19 @@ async function insertNews({ object_insert, image_link, body, category_id}) {
     });
 }
 
-
-console.log('crawler tienphong');
-
-
-try {
-    getXaHoi().then(async res => {
-        const list_items = res.rss.channel.item;
-        const item = _.head(list_items)
+async function crawlerRunning(res, category_id) {
+    const list_items = res.rss.channel.item;
+    const list_uuid = list_items.map(item => item.guid);
+    const list_uuid_existed = await axios({
+        method: 'post',
+        url: 'http://localhost:3003/checkNewExisted',
+        responseType: 'json',
+        data: { list_uuid: list_uuid }
+    });
+    const list_items_need_consider = _.filter(list_items, item => !_.includes(list_uuid_existed.data, item.guid));
+    console.log("TCL: crawlerRunning -> list_items", list_items.length)
+    console.log("TCL: crawlerRunning -> list_items_need_consider", list_items_need_consider.length);
+    const p_list_consider = list_items_need_consider.map(async item => {
         const imageObject = cheerio.load(item.description);
         const _image_link = imageObject('img').attr('src');
         const object_insert = {
@@ -78,96 +85,51 @@ try {
             pub_date: item.pubDate,
             source_link: item.link
         };
-        const { body, image_link } = await getDetailTienPhong(object_insert.source_link);
-        if (!!body) {
+        const { body, image_link } = await getDetail(object_insert.source_link);
+        if (!!body && !!image_link) {
             const resInsert = await insertNews({
                 object_insert: object_insert,
                 image_link: image_link,
                 body: body,
-                category_id: 4
-            })
-        }
-    })   
-} catch (error) {
-    console.log("TCL: error", error)
-    
-}
-
-try {
-
-    getGiaiTri().then(async res => {
-        const list_items = res.rss.channel.item;
-        const item = _.head(list_items)
-        const imageObject = cheerio.load(item.description);
-        const _image_link = imageObject('img').attr('src');
-        const object_insert = {
-            uuid: item.guid,
-            title: item.title,
-            description: item.description.replace(/<[^>]*>/g, ''),
-            image_link: _image_link,
-            pub_date: item.pubDate,
-            source_link: item.link
-        };
-        const { body, image_link } = await getDetailTienPhong(object_insert.source_link);
-        if (!!body) {
-            const resInsert = await axios({
-                method: 'post',
-                url: 'http://localhost:3003/insertNews',
-                responseType: 'json',
-                data: {
-                    "uuid": object_insert.uuid,
-                    "title": object_insert.title,
-                    "description": object_insert.description,
-                    "image_link": !!image_link ? image_link : object_insert.image_link,
-                    "pub_date": object_insert.pub_date,
-                    "source_link": object_insert.source_link,
-                    "body": body,
-                    category_id: 5
-                }
+                category_id: category_id
             });
         }
-    })   
-} catch (error) {
-    console.log("TCL: error", error)
-    
+    });
+    await Promise.all(p_list_consider)
 }
 
-try {
-
-    getTheThao().then(async res => {
-        const list_items = res.rss.channel.item;
-        const item = _.head(list_items)
-        const imageObject = cheerio.load(item.description);
-        const _image_link = imageObject('img').attr('src');
-        const object_insert = {
-            uuid: item.guid,
-            title: item.title,
-            description: item.description.replace(/<[^>]*>/g, ''),
-            image_link: _image_link,
-            pub_date: item.pubDate,
-            source_link: item.link
-        };
-        const { body, image_link } = await getDetailTienPhong(object_insert.source_link);
-        if (!!body) {
-            const resInsert = await axios({
-                method: 'post',
-                url: 'http://localhost:3003/insertNews',
-                responseType: 'json',
-                data: {
-                    "uuid": object_insert.uuid,
-                    "title": object_insert.title,
-                    "description": object_insert.description,
-                    "image_link": !!image_link ? image_link : object_insert.image_link,
-                    "pub_date": object_insert.pub_date,
-                    "source_link": object_insert.source_link,
-                    "body": body,
-                    category_id: 6
-                }
-            });
-        }
-    })
-} catch (error) {
-    console.log("TCL: error", error)
-    
+const xahoi = async function (category_id) {
+    try {
+        getXaHoi().then(async res => {
+            await crawlerRunning(res, category_id)
+        })
+    } catch (error) {
+        console.log("TCL: error", error)
+    }
 }
 
+const giaitri = async function (category_id) {
+    try {
+        getGiaiTri().then(async res => {
+            await crawlerRunning(res, category_id)
+        });
+    } catch (error) {
+        console.log("TCL: error", error)
+    }
+}
+
+const thethao = async function (category_id) {
+    try {
+        getTheThao().then(async res => {
+            await crawlerRunning(res, category_id)
+        })
+    } catch (error) {
+        console.log("TCL: error", error)
+    }
+}
+
+module.exports = async function () {
+    await xahoi(4)
+    await giaitri(5)
+    await thethao(6)
+}

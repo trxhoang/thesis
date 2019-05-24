@@ -1,6 +1,6 @@
 
 
 
-require('./crawler-tienphong')
-require('./crawler-tuoitre')
-require('./crawler-vnexpress')
+require('./crawler-tienphong')()
+require('./crawler-vnexpress')()
+require('./crawler-tuoitre')()
