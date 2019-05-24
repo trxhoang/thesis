@@ -128,6 +128,6 @@ const thethao = async function (category_id) {
 
 module.exports = async function () {
     await xahoi(1)
-    // await giaitri(2)
-    // await thethao(3)
+    await giaitri(2)
+    await thethao(3)
 }
