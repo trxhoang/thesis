@@ -48,23 +48,54 @@ module.exports = app => {
         const listCategorySportId = listCategorySport.map(category => category.id);
         const listCategoryEntertainmentId = listCategoryEntertainment.map(category => category.id);
 
-
-        const listHeroNews = await NewsDetail.findAll({
+        const listSocialNews = await NewsDetail.findAll({
             raw: true,
-            limit: 10,
+            where: {
+                category_id: {
+                    [Op.in]: listCategorySocialId
+                }
+            },
+            limit: 6,
             order: [
                 ['id', 'DESC'],
             ]
         });
+        const listSportNews = await NewsDetail.findAll({
+            raw: true,
+            where: {
+                category_id: {
+                    [Op.in]: listCategorySportId
+                }
+            },
+            limit: 6,
+            order: [
+                ['id', 'DESC'],
+            ]
+        });
+        const listEntertainmentNews = await NewsDetail.findAll({
+            raw: true,
+            where: {
+                category_id: {
+                    [Op.in]: listCategoryEntertainmentId
+                }
+            },
+            limit: 6,
+            order: [
+                ['id', 'DESC'],
+            ]
+        });
+
+        const listHeroNews = [
+            ..._.slice(listSocialNews, 0, 3),
+            ..._.slice(listSportNews, 0, 3),
+            ..._.slice(listEntertainmentNews, 0, 3)
+        ]
+
         const color = {
             'social': 'blue',
             'sport': 'red',
             'entertainment': 'green'
-        }
-
-        const listSocialNews = listHeroNews.filter(news => _.includes(listCategorySocialId, news.category_id));
-        const listSportNews = listHeroNews.filter(news => _.includes(listCategorySportId, news.category_id));
-        const listEntertainmentNews = listHeroNews.filter(news => _.includes(listCategoryEntertainmentId, news.category_id));
+        };
 
         res.render("index", {
             listHeroNews: listHeroNews.map(news => {
@@ -76,7 +107,7 @@ module.exports = app => {
                     color: color[category.title] || 'blue'
                 }
             }),
-            listSocialNews: listSocialNews.map(news=>{
+            listSocialNews: listSocialNews.map(news => {
                 const category = _.find(listCategory, _category => _category.id === news.category_id);
                 return {
                     ...news,
@@ -85,7 +116,7 @@ module.exports = app => {
                     color: color[category.title] || 'blue'
                 }
             }),
-            listSportNews: listSportNews.map(news=>{
+            listSportNews: listSportNews.map(news => {
                 const category = _.find(listCategory, _category => _category.id === news.category_id);
                 return {
                     ...news,
@@ -94,7 +125,7 @@ module.exports = app => {
                     color: color[category.title] || 'blue'
                 }
             }),
-            listEntertainmentNews: listEntertainmentNews.map(news=>{
+            listEntertainmentNews: listEntertainmentNews.map(news => {
                 const category = _.find(listCategory, _category => _category.id === news.category_id);
                 return {
                     ...news,
