@@ -34,7 +34,7 @@
   "license": "ISC",
   "scripts": {
     "start": "nodemon --exec babel-node --presets es2015 server.js",
-    "dev": "node crawler-tienphong"
+    "dev": "node crawler"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
