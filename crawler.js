@@ -1,6 +1,7 @@
 
 
-
-require('./crawler-tienphong')()
-require('./crawler-vnexpress')()
-require('./crawler-tuoitre')()
+(async ()=>{
+  await require('./crawler-tienphong')()
+  await require('./crawler-vnexpress')()
+  await require('./crawler-tuoitre')()
+})()
