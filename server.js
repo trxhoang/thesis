@@ -8,6 +8,8 @@ import passport from 'passport';
 import routes from './routes'
 import path from 'path'
 import layout from 'express-ejs-layouts'
+import crawler from './crawler'
+
 
 const app = express();
 
@@ -65,9 +67,13 @@ app.use((req, res) => res.redirect('/'));
 
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
 
-// const interval = setInterval(() => {
-//   require('./crawler')
-// }, 15 * 60 * 1000);
+const interval = setInterval(() => {
+  try {
+    Promise.all([crawler()])
+  } catch (error) {
+    console.log(error)
+  }
+}, 15 * 60 * 1000);
 
 
 module.exports = app;
