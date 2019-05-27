@@ -3,12 +3,13 @@ import CategoryModel from './models/category';
 import NewsDetailModel from './models/news_details';
 
 const sequelize = new Sequelize({
-  host: '103.7.40.91',
-  port: 3306,
+  host: '112.109.93.135',
+  port: 36032,
   database: 'thesis',
   username: 'trxhoang',
   password: 'trxhoang@1235',
   dialect: 'mysql',
+  logging: false,
   dialectOptions: {
     dateStrings: true,
     typeCast: true,
