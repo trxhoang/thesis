@@ -1,7 +1,10 @@
 
 
+
+const tienphong = require('./crawler-tienphong')
+const vnexpress = require('./crawler-vnexpress')
 (async ()=>{
-  await require('./crawler-tienphong')()
-  await require('./crawler-vnexpress')()
-  await require('./crawler-tuoitre')()
+  await tienphong();
+  await vnexpress()
+  // await require('./crawler-tuoitre')()
 })()
